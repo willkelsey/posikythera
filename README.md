@@ -1,0 +1,11 @@
+# Antikythera Simulation
+
+## Software Design Process Model
+
+The ideal software process model is the incremental development model. Having previously developed equations and methods on 2-D planet modeling, the next step would be to expand on what is already there.
+
+Specifications: Specifications will include the mass of the planet, the diameter of the planet, the centripetal velocity, rotations in a day, distance between the planets. More can be added between the initial versions and the intermediate versions.
+
+Development: The first version of the program will be to model the solar system’s behavior with only the earth and the sun. Obviously, this is not the final version of the program as, ideally, more planets and events will be in the program. As the program moves towards a smoother model of the sun and the earth, more elements can be added into the program without complications. If the 2-D version is flawless, the 3-D version can be put into production.
+
+Validation: The system can then be tested at a higher level to see if the program is accurate. All the data should make sense and the program should seem correct to the user. For example, a year would be much longer for a planet further away from the sun. Also, events, such as solar eclipses, should happen every so often. 
