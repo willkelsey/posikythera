@@ -2,7 +2,7 @@ import math
 import datetime
 import matplotlib.pyplot as plt
 
-class planet(object):
+class planet:
     # heliocentric coordinates
     x = 0
     y = 0
@@ -80,19 +80,97 @@ class planet(object):
         return x,y,z
 
 
+class satellite(planet):
+    # heliocentric coordinates
+    x = 0
+    y = 0
+    z = 0
+
+    def __init__(self, i, icy, a, acy, an, ancy, e, ecy, l, lcy, w, wcy):
+        # inclination
+        self.i = i
+        self.icy = icy
+        # semi major axis
+        self.a = a
+        self.acy = acy
+        # longitude of ascending node
+        self.an = an
+        self.ancy = ancy
+        # eccentricity
+        self.e = e
+        self.ecy = ecy
+        # mean longitude
+        self.l = l
+        self.lcy = lcy
+        # arguement of perihelion
+        self.w = w
+        self.wcy = wcy
+
+    def calc_Moonpos(self, i, icy, a, acy, an, ancy, e, ecy, l, lcy, w, wcy, T):
+        # Orbital element values based on input date
+        aa = a + acy * T
+        ee = e + ecy * T
+        ii = i + icy * T
+        ll = l + lcy * T
+        ww = w + wcy * T
+        ann = an + ancy * T
+        # calculate argument of perihelion
+        w1 = 318.15+(360/999999999999 * 100)*T
+        # calculate mean anomaly
+        M = 93565.26993900
+        if math.fmod(M,360) > 180:
+            Mm = math.fmod(M,360) - 360
+        else:
+            Mm = math.fmod(M,360)
+        estar = ee*(180/math.pi)
+        # have to do these a couple times
+        #calculating the eccentric anomaly
+        e0 = Mm + estar * math.sin(Mm*(math.pi/180))
+        dm0 = M - e0 + estar * math.sin(e0*math.pi/180)
+        de0 = dm0/(1-ee * math.cos(e0*math.pi/180))
+        e1 = e0 + de0
+        dm1 = M - e1 + estar * math.sin(e1*math.pi/180)
+        de1 = dm1 / (1 - ee * math.cos(e1 * math.pi / 180))
+        e2 = e1 + de1
+        dm2 = M - e2 + estar * math.sin(e2 * math.pi / 180)
+        de2 = dm2 / (1 - ee * math.cos(e2 * math.pi / 180))
+        e3 = e2 + de2
+        dm3 = M - e3 + estar * math.sin(e3 * math.pi / 180)
+        de3 = dm3 / (1 - ee * math.cos(e3 * math.pi / 180))
+        e4 = e3 + de3
+        dm4 = M - e4 + estar * math.sin(e4*math.pi/180)
+        de4 = dm4 / (1 - ee * math.cos(e4 * math.pi / 180))
+        e5 = e4 + de4
+        dm5 = M - e5 + estar * math.sin(e5 * math.pi / 180)
+        de5 = dm5 / (1 - ee * math.cos(e5 * math.pi / 180))
+        e6 = e5 + de5
+        dm6 = M - e6 + estar * math.sin(e6 * math.pi / 180)
+        de6 = dm6 / (1 - ee * math.cos(e6 * math.pi / 180))
+
+        #preliminary x,y,z coords use to calculate heliocentric coords
+        xb = aa * (math.cos(e6 * math.pi/180)-ee)
+        yb = aa * math.sqrt(1 - ee * ee) * math.sin(e6 * math.pi/180)
+        zb = 0.0
+        #calculation of the heliocentric coordinates
+        x = (math.cos(w1 * math.pi / 180) * math.cos(ann * math.pi / 180) - math.sin(w1 * math.pi / 180) * math.sin(ann * math.pi / 180) * math.cos(ii * math.pi / 180)) * xb + (-math.sin(w1 * math.pi / 180) * math.cos(ann * math.pi / 180) - math.cos(w1 * math.pi / 180) * math.sin(ann * math.pi / 180) * math.cos(ii * math.pi / 180)) * yb + Earth.x
+        y = (math.cos(w1*math.pi/180)*math.sin(ann*math.pi/180)+math.sin(w1*math.pi/180)*math.cos(ann*math.pi/180)*math.cos(ii*math.pi/180))*xb+(-math.sin(w1*math.pi/180)*math.sin(ann*math.pi/180)+math.cos(w1*math.pi/180)*math.cos(ann*math.pi/180)*math.cos(ii*math.pi/180))*yb + Earth.y
+        z = (math.sin(w1*math.pi/180)*math.sin(ii*math.pi/180))*xb+(math.cos(w1*math.pi/180)*math.sin(ii*math.pi/180))*yb + Earth.z
+        return x,y,z
+
+
 def calc_date(year, month, day, hour, minute, second):
     # J2000 Reference date 1/1/2000
     ref = datetime.datetime(2000, 1, 1, 12, 0, 0)
     date = datetime.datetime(year, month, day, hour, minute, second)
+    print("Calculating the position on ")
     print(date)
     days_elapsed = date - ref
     dec_days_elapsed = days_elapsed.days + (hour / 24 + minute / 60 / 24 + second / 60 / 60 / 24) - (12 / 24 + 0 / 60 / 24 + 0 / 60 / 60 / 24)
     return dec_days_elapsed / 36525
 
-#change the values for T to alter the date of calculation
-T = calc_date(2019, 6, 23, 12, 0, 0)
 
-
+# change the values for T to alter the date of calculation
+T = calc_date(2019, 6, 12, 12, 0, 0)
 
 # planet orbital elements and calculating the position based on T
 Mercury = planet(7.00559432, -0.00590158, 0.38709843, 0.000000, 48.33961819, -0.12214182, 0.20563661, 0.00002123,252.25166724, 149472.67486623, 77.45771895, 0.15940013)
@@ -114,14 +192,20 @@ Neptune.x, Neptune.y, Neptune.z = Neptune.calc_pos(Neptune.i, Neptune.icy, Neptu
 Pluto = planet(17.14104260,0.00000501,39.48686035,0.00449751,110.30167986,-0.00809981,0.24885238,0.00006016,238.96535011,145.18042903,224.09702598,-0.00968827)
 Pluto.x, Pluto.y, Pluto.z = Pluto.calc_pos(Pluto.i, Pluto.icy, Pluto.a, Pluto.acy, Pluto.an, Pluto.ancy, Pluto.e, Pluto.ecy, Pluto.l, Pluto.lcy, Pluto.w, Pluto.wcy, T)
 
+Moon = satellite(5.16,0,0.00256956,0,125.08000,-0.00000004,0.0554,0,0,0,0,0)
+Moon.x , Moon.y , Moon.z = Moon.calc_Moonpos(Moon.i,Moon.icy,Moon.a,Moon.acy,Moon.an,Moon.ancy,Moon.e,Moon.ecy,Moon.l,Moon.lcy,Moon.w,Moon.wcy,T)
+temp = math.atan2(Earth.y - Mars.y,Earth.x - Mars.x)
+print(temp * (180/math.pi))
 
-xcoords = [0, Mercury.x, Venus.x, Earth.x, Mars.x, Jupiter.x, Saturn.x, Uranus.x, Neptune.x, Pluto.x]
-ycoords = [0, Mercury.y, Venus.y, Earth.y, Mars.y, Jupiter.y, Saturn.y, Uranus.y, Neptune.y, Pluto.y]
-zcoords = [0, Mercury.z, Venus.z, Earth.z, Mars.z, Jupiter.z, Saturn.z, Uranus.z, Neptune.z, Pluto.z]
+
+xcoords = [0,Mercury.x,Venus.x, Earth.x, Moon.x,Mars.x, Jupiter.x, Saturn.x, Uranus.x, Neptune.x, Pluto.x]
+ycoords = [0,Mercury.y,Venus.y ,Earth.y, Moon.y,Mars.y, Jupiter.y, Saturn.y, Uranus.y, Neptune.y, Pluto.y]
+zcoords = [0,Mercury.z,Venus.z ,Earth.z, Moon.z ,Mars.z, Jupiter.z, Saturn.z, Uranus.z, Neptune.z, Pluto.z]
 print(xcoords)
 print(ycoords)
 print(zcoords)
 plt.plot(xcoords, ycoords, 'o')
-plt.xlim(-10, 30)
-plt.ylim(-40, 20)
+plt.xlim(-35, 35)
+plt.ylim(-35, 35)
 plt.show()
+
