@@ -94,12 +94,21 @@ class planet:
         p_transferdays = p_transfer * 365
         print("The period in years to complete transfer is",p_transfer, "years or",p_transferdays,"days")
         deltaang = destination.degreeperiod * p_transferdays
+        print(deltaang)
         position = 180 - deltaang
         if position < 0:
             position = math.fabs(position)
-            print("In order to perform this transfer orbit,", origin.name, " must be", position,"degrees ahead of", destination.name)
+            if position > 360:
+                position = math.fmod(position, 360)
+                print("In order to perform this transfer orbit,", origin.name, " must be", position,"degrees ahead of", destination.name)
+            else:
+                print("In order to perform this transfer orbit,", origin.name, " must be", position,"degrees ahead of", destination.name)
+        elif position > 360:
+            position = math.fmod(position,360)
+            print("In order to perform this transfer orbit,",destination.name," must be", position,"degrees ahead of", origin.name)
         else:
-            print("In order to perform this transfer orbit,",destination.name," must be",position,"degrees ahead of",origin.name)
+            print("In order to perform this transfer orbit,",destination.name," must be", position,"degrees ahead of", origin.name)
+
         V1 = math.sqrt(u/origin.a)*(math.sqrt((2* destination.a)/(origin.a + destination.a))-1)
         V2 = math.sqrt(u/destination.a)*(1 - math.sqrt((2* origin.a)/(origin.a + destination.a)))
         totalV = V1 + V2
@@ -196,7 +205,7 @@ def calc_date(year, month, day, hour, minute, second):
 
 
 # change the values for T to alter the date of calculation
-T = calc_date(2019, 6, 13, 12, 0, 0)
+T = calc_date(2019, 2, 28, 12, 0, 0)
 
 # planet orbital elements and calculating the position based on T
 Mercury = planet(7.00559432, -0.00590158, 0.38709843, 0.000000, 48.33961819, -0.12214182, 0.20563661, 0.00002123,252.25166724, 149472.67486623, 77.45771895, 0.15940013,88,4.09,'Mercury')
@@ -220,8 +229,9 @@ Pluto.x, Pluto.y, Pluto.z = Pluto.calc_pos(Pluto.i, Pluto.icy, Pluto.a, Pluto.ac
 
 Moon = satellite(5.16,0,0.00256956,0,125.08000,-0.00000004,0.0554,0,0,0,0,0)
 Moon.x , Moon.y , Moon.z = Moon.calc_Moonpos(Moon.i,Moon.icy,Moon.a,Moon.acy,Moon.an,Moon.ancy,Moon.e,Moon.ecy,Moon.l,Moon.lcy,Moon.w,Moon.wcy,T)
-#temp = math.atan2(Earth.y - Jupiter.y,Earth.x - Jupiter.x)
 
+temp = math.atan2(Mars.y - Earth.y,Mars.x - Earth.x)
+print(math.fabs(temp*(180/math.pi)))
 
 xcoords = [0,Mercury.x,Venus.x, Earth.x, Moon.x,Mars.x, Jupiter.x, Saturn.x, Uranus.x, Neptune.x, Pluto.x]
 ycoords = [0,Mercury.y,Venus.y ,Earth.y, Moon.y,Mars.y, Jupiter.y, Saturn.y, Uranus.y, Neptune.y, Pluto.y]
@@ -229,13 +239,9 @@ zcoords = [0,Mercury.z,Venus.z ,Earth.z, Moon.z ,Mars.z, Jupiter.z, Saturn.z, Ur
 print(xcoords)
 print(ycoords)
 print(zcoords)
-Earth.hohmann(Earth.period,Earth.degreeperiod)
 plt.plot(xcoords, ycoords, 'o')
 plt.xlim(-35, 35)
 plt.ylim(-35, 35)
 plt.show()
-
-
-
-
+Earth.hohmann(Earth.period,Earth.degreeperiod)
 
