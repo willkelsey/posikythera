@@ -1,5 +1,10 @@
 import datetime as d
 
+
+def search_event():
+    print("Searching by event")
+
+
 class event(object):
   def __init__(self, tp, dt, tm):
     self.type = tp
