@@ -7,11 +7,6 @@ connection = sqlite3.connect('event.db')
 crsr = connection.cursor()
 
 
-
-def search_event():
-    print("Searching by event")
-
-
 class event(object):
     def __init__(self, tp, dt, tm):
         self.type = tp
@@ -36,6 +31,8 @@ class eclipse(event):
     # test if our solar system aligns when there is a known event
     # send date and time of eclipse and check if the position is right
     def validation(self):
+        aligned = False
+
         Earth = planentpos.planet(-0.00054346, -0.01337178, 1.00000018, -0.00000003, -5.11260389, -0.24212385, 0.01673163,
                                   -0.00003661, 100.46691572, 35999.37306329, 102.93005885, 0.31795260, 365.2, 0.9857, 'Earth')
         Earth.x, Earth.y, Earth.z = Earth.calc_pos(Earth.i, Earth.icy, Earth.a, Earth.acy, Earth.an, Earth.ancy,
@@ -44,15 +41,20 @@ class eclipse(event):
         Moon = planentpos.satellite(5.16, 0, 0.00256956, 0, 125.08000, -0.00000004, 0.0554, 0, 0, 0, 0, 0)
         Moon.x, Moon.y, Moon.z = Moon.calc_Moonpos(Moon.i, Moon.icy, Moon.a, Moon.acy, Moon.an, Moon.ancy, Moon.e,
                                                    Moon.ecy, Moon.l, Moon.lcy, Moon.w, Moon.wcy, self.solarSystem())
-        Sun_x, Sun_y, Sun_z = 0
 
         if self.type == "solar eclipse":
-
-            return 0
+            # find the line between sun and earth and check if the moon is on that line
+            solarSlope = Earth.y/Earth.x
+            if Moon.y == solarSlope * Moon.x:
+                aligned = True
 
         elif self.type == "lunar eclipse":
-
-            return 1
+            # find the line between sun and moon and check if the earth is on that line
+            lunarSlope = Moon.y/Moon.x
+            if Earth.y == lunarSlope * Earth.x:
+                aligned = True
+        
+        return aligned
 
 
 class alignment(event):
