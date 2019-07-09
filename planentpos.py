@@ -1,6 +1,7 @@
 import math
 import datetime
 import matplotlib.pyplot as plt
+from event import search_event
 
 
 class planet:
@@ -235,8 +236,7 @@ def calc_date(year, month, day, hour, minute, second):
 # plt.ylim(-35, 35)
 # plt.show()
 #Earth.hohmann(Earth.period,Earth.degreeperiod)
-def search_event():
-    print("Searching by event")
+
 
 
 while 1:
