@@ -7,6 +7,11 @@ connection = sqlite3.connect('event.db')
 crsr = connection.cursor()
 
 
+
+def search_event():
+    print("Searching by event")
+
+
 class event(object):
     def __init__(self, tp, dt, tm):
         self.type = tp
