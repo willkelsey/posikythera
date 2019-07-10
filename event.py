@@ -62,24 +62,25 @@ class alignment(event):
         event.__init__(self, tp, dt, tm)
 
 
-def events():
-    crsr.execute("SELECT * FROM event WHERE type='solar eclipse'")
-    solar_eclipse = crsr.fetchall()
-    crsr.execute("SELECT * FROM event WHERE type='lunar eclipse'")
-    lunar_eclipse = crsr.fetchall()
-    for i in solar_eclipse:
-        print(i)
-    for j in lunar_eclipse:
-        print(j)
-
-
 def search_event():
-    print("Enter a range of dates you would like to search for an event.")
-    date1 = input("From: ")
-    start = d.datetime.strptime(date1, "%Y-%m-%d")
-    date2 = input("To: ")
-    end = d.datetime.strptime(date2, "%Y-%m-%d")
-    crsr.execute("SELECT * FROM event WHERE date BETWEEN ? AND ?", (start, end))
-    results = crsr.fetchall()
-    for i in results:
-        print(i)
+    choice = input("Select 1 to search by date, 2 to search by type, 3 to go back\n")
+    while 1:
+        if choice == "1":
+            print("Enter a range of dates you would like to search for an event. (yyyy-mm-dd)")
+            date1 = input("From: ")
+            start = d.datetime.strptime(date1, "%Y-%m-%d")
+            date2 = input("To: ")
+            end = d.datetime.strptime(date2, "%Y-%m-%d")
+            crsr.execute("SELECT * FROM event WHERE date BETWEEN ? AND ?", (start, end))
+            results = crsr.fetchall()
+            for i in results:
+                print(i)
+            break
+        elif choice == "2":
+            type = input("Enter a type of event you would like to search for: ")
+            crsr.execute("SELECT * FROM event WHERE type=?", (type,))
+            results = crsr.fetchall()
+            for i in results:
+                print(i)
+            break
+        break
