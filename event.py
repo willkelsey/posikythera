@@ -3,7 +3,7 @@ import planentpos
 import sqlite3
 
 
-connection = sqlite3.connect('event.db')
+connection = sqlite3.connect('events.db')
 crsr = connection.cursor()
 
 
@@ -74,4 +74,12 @@ def events():
 
 
 def search_event():
-    events()
+    print("Enter a range of dates you would like to search for an event.")
+    date1 = input("From: ")
+    start = d.datetime.strptime(date1, "%Y-%m-%d")
+    date2 = input("To: ")
+    end = d.datetime.strptime(date2, "%Y-%m-%d")
+    crsr.execute("SELECT * FROM event WHERE date BETWEEN ? AND ?", (start, end))
+    results = crsr.fetchall()
+    for i in results:
+        print(i)
