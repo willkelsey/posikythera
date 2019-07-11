@@ -12,7 +12,7 @@ create table planetinfo
 	rotationperiod			decimal,
 	orbitaleccentricity		decimal,
 	distancefromsun			decimal,
-	numberofmoons			int,
+	numberofmoons			int
 
 	);
 
