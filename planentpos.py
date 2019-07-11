@@ -2,6 +2,7 @@ import math
 import datetime
 import matplotlib.pyplot as plt
 import event
+from mpl_toolkits.mplot3d import Axes3D
 
 
 class planet:
@@ -225,6 +226,8 @@ def hohmann():
         else:
             date += datetime.timedelta(days=1)
             k =1
+
+
 while 1:
     print("Welcome to Antikythera Simulation main menu")
     c = input("Press 1 to view the entire system, 2 to search for an astronomical event, "
@@ -264,9 +267,25 @@ while 1:
         xcoords = [0, Mercury.x, Venus.x, Earth.x, Moon.x, Mars.x, Jupiter.x, Saturn.x, Uranus.x, Neptune.x, Pluto.x]
         ycoords = [0, Mercury.y, Venus.y, Earth.y, Moon.y, Mars.y, Jupiter.y, Saturn.y, Uranus.y, Neptune.y, Pluto.y]
         zcoords = [0, Mercury.z, Venus.z, Earth.z, Moon.z, Mars.z, Jupiter.z, Saturn.z, Uranus.z, Neptune.z, Pluto.z]
-        plt.plot(xcoords, ycoords, 'o')
-        plt.xlim(-35, 35)
-        plt.ylim(-35, 35)
+        #plt.plot(xcoords, ycoords, 'o')
+        #plt.xlim(-35, 35)
+        #plt.ylim(-35, 35)
+        #plt.show()
+
+        fig = plt.figure()
+        ax = fig.add_subplot(111, projection='3d')
+        ax.scatter(xcoords, ycoords, zcoords, cmap='jet')
+
+        ax.set_xlim3d([-40, 40])
+        ax.set_xlabel('X')
+
+        ax.set_ylim3d([-40, 40])
+        ax.set_ylabel('Y')
+
+        ax.set_zlim3d([-40, 40])
+        ax.set_zlabel('Z')
+
+        ax.set_title('Antikythera')
         plt.show()
     elif choice == 0:
         break
