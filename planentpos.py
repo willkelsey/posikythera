@@ -286,6 +286,9 @@ while 1:
         ax.set_zlabel('Z')
 
         ax.set_title('Antikythera')
+        planets =['Sun','Mercury','Venus','Earth','Moon','Mars','Jupiter','Saturn','Uranus','Neptune','Pluto']
+        for i, word in enumerate(planets):
+            ax.text(xcoords[i], ycoords[i],zcoords[i],word)
         plt.show()
     elif choice == 0:
         break
