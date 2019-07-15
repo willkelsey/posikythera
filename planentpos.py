@@ -174,10 +174,12 @@ def calc_date(year, month, day, hour, minute, second):
     return dec_days_elapsed / 36525
 
 
-def hohmann():
+def hohmann(orig, dest):
     u = 1.32712440018e20
-    origin = eval(input("What is the place of origin? \n"))
-    destination = eval(input("What is the target destination? \n"))
+    #origin = eval(input("What is the place of origin? \n"))
+    #destination = eval(input("What is the target destination? \n"))
+    origin = orig
+    destination = dest
     a_transfer = 0.5 * (origin.a + destination.a)
     p_transfer = math.sqrt(a_transfer * a_transfer * a_transfer) / 2
     p_transferdays = p_transfer * 365
@@ -228,6 +230,7 @@ def hohmann():
             k =1
 
 
+#if __name__ == '__main__':
 while 1:
     print("Welcome to Antikythera Simulation main menu")
     c = input("Press 1 to view the entire system, 2 to search for an astronomical event, "
