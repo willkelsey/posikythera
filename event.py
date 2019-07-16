@@ -73,6 +73,7 @@ def search_event():
             end = d.datetime.strptime(date2, "%Y-%m-%d")
             crsr.execute("SELECT * FROM event WHERE date BETWEEN ? AND ?", (start, end))
             results = crsr.fetchall()
+            print(end)
             for i in results:
                 print(i)
             break

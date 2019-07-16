@@ -176,8 +176,6 @@ def calc_date(year, month, day, hour, minute, second):
 
 def hohmann(orig, dest):
     u = 1.32712440018e20
-    #origin = eval(input("What is the place of origin? \n"))
-    #destination = eval(input("What is the target destination? \n"))
     origin = orig
     destination = dest
     a_transfer = 0.5 * (origin.a + destination.a)
@@ -298,6 +296,6 @@ while 1:
     elif choice == 2:
         event.search_event()
     elif choice == 3:
-        hohmann()
+        hohmann("Earth", "Mars")
     else:
         print("Invalid input")
