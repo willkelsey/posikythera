@@ -1,6 +1,6 @@
 from tkinter import *
 from Antikythera import planentpos as p
-from Antikythera import hohmann
+from Antikythera import hohman
 from Antikythera import event
 from Antikythera.simulation import simulate
 import sqlite3
@@ -64,6 +64,9 @@ text = content_event_event.get()
 content_event_event.set(text)
 
 entry_event_date = Entry(root, textvariable=content_event_date).grid(row=8, column=0)
+
+planet_info_label = Label(root, text=" Click on a planet to display that planet's information").grid(row=10)
+
 #callback functions for buttons
 def go_to_time():
     y = content_year.get()
@@ -116,11 +119,29 @@ def search_event_date():
 
     print("Searching by date " + s)
 
+def display_planet_info() :
+    # p  = display_planet_info.get()
+    print("Displaying planet info...")
+
 
 # buttons
 button_go_to_time = Button(root, text="Go To Time", command=go_to_time).grid(row=3, column=1)
 button_hohmann = Button(root, text="Calculate travel window", command=execute_hohmann).grid(row=6, column=1)
 button_search_event_event = Button(root, text="Search by event", command=search_event_event).grid(row=9, column=1)
 button_search_event_date = Button(root, text="Search by date", command=search_event_date).grid(row=9, column=0)
+
+
+
+# buttons for displaying planet info
+button_Mercury = Button(root, text="Mercury", command=display_planet_info).grid(row=14, column=0)
+button_Venus = Button(root, text="Venus", command=display_planet_info).grid(row=14, column=1)
+button_Earth = Button(root, text="Earth", command=display_planet_info).grid(row=15, column=0)
+button_Mars = Button(root, text="Mars", command=display_planet_info).grid(row=15, column=1)
+button_Jupiter = Button(root, text="Jupiter", command=display_planet_info).grid(row=16, column=0)
+button_Saturn = Button(root, text="Saturn", command=display_planet_info).grid(row=16, column=1)
+button_Uranus = Button(root, text="Uranus", command=display_planet_info).grid(row=17, column=0)
+button_Neptune = Button(root, text="Neptune", command=display_planet_info).grid(row=17, column=1)
+button_Pluto = Button(root, text="Pluto", command=display_planet_info).grid(row=18, column=0)
+
 # keep the gui open until closed
-mainloop()
+main
