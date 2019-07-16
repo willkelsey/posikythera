@@ -144,4 +144,4 @@ button_Neptune = Button(root, text="Neptune", command=display_planet_info).grid(
 button_Pluto = Button(root, text="Pluto", command=display_planet_info).grid(row=18, column=0)
 
 # keep the gui open until closed
-main
+mainloop()
