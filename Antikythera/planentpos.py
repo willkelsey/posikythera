@@ -190,48 +190,49 @@ Sun = planet(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'Sun')
 list = [Sun, Mercury, Venus, Earth, Mars, Jupiter, Saturn, Uranus, Neptune, Pluto]
 T = calc_date(1983, 11, 17, 12, 0, 0)
 x, y, z = simulation.simulate(T)
-while 1:
-    print("Welcome to Antikythera Simulation main menu")
-    c = input("Press 1 to view the entire system, 2 to search for an astronomical event, "
-              "3 for best travel window and 0 to exit\n")
-    # typecast to int of base 10
-    choice = int(c, 10)
-    if choice == 1:
-        year = input("Type the year to see\n")
-        year = int(year, 10)
-        month = input("Type the month\n")
-        month = int(month, 10)
-        day = input("Type the day\n")
-        day = int(day, 10)
-        T = calc_date(year, month, day, 12, 0, 0)
-        x, y, z = simulation.simulate(T)
+if __name__ == "__main__":
+     while 1:
+        print("Welcome to Antikythera Simulation main menu")
+        c = input("Press 1 to view the entire system, 2 to search for an astronomical event, "
+                  "3 for best travel window and 0 to exit\n")
+        # typecast to int of base 10
+        choice = int(c, 10)
+        if choice == 1:
+            year = input("Type the year to see\n")
+            year = int(year, 10)
+            month = input("Type the month\n")
+            month = int(month, 10)
+            day = input("Type the day\n")
+            day = int(day, 10)
+            T = calc_date(year, month, day, 12, 0, 0)
+            x, y, z = simulation.simulate(T)
 
 
-        fig = plt.figure()
-        ax = fig.add_subplot(111, projection='3d')
-        ax.scatter(x, y, z, cmap='jet')
+            fig = plt.figure()
+            ax = fig.add_subplot(111, projection='3d')
+            ax.scatter(x, y, z, cmap='jet')
 
-        ax.set_xlim3d([-40, 40])
-        ax.set_xlabel('X')
+            ax.set_xlim3d([-40, 40])
+            ax.set_xlabel('X')
 
-        ax.set_ylim3d([-40, 40])
-        ax.set_ylabel('Y')
+            ax.set_ylim3d([-40, 40])
+            ax.set_ylabel('Y')
 
-        ax.set_zlim3d([-40, 40])
-        ax.set_zlabel('Z')
+            ax.set_zlim3d([-40, 40])
+            ax.set_zlabel('Z')
 
-        ax.set_title('Antikythera')
-        planets =['Sun','Mercury','Venus','Earth','Moon','Mars','Jupiter','Saturn','Uranus','Neptune','Pluto']
-        for i, word in enumerate(planets):
-            ax.text(x[i], y[i], z[i],word)
-        plt.show()
-    elif choice == 0:
-        break
-    elif choice == 2:
-        event.search_event()
-    elif choice == 3:
-        orig = input('Origin: \n')
-        dest = input('Destination: \n')
-        hohmann.hohmann(orig, dest)
-    else:
-        print("Invalid input")
+            ax.set_title('Antikythera')
+            planets =['Sun','Mercury','Venus','Earth','Moon','Mars','Jupiter','Saturn','Uranus','Neptune','Pluto']
+            for i, word in enumerate(planets):
+                ax.text(x[i], y[i], z[i],word)
+            plt.show()
+        elif choice == 0:
+            break
+        elif choice == 2:
+            event.search_event()
+        elif choice == 3:
+            orig = input('Origin: \n')
+            dest = input('Destination: \n')
+            hohmann.hohmann(orig, dest)
+        else:
+            print("Invalid input")

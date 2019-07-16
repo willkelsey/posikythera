@@ -1,6 +1,6 @@
 from tkinter import *
 from Antikythera import planentpos as p
-from Antikythera import hohman
+from Antikythera import hohmann
 from Antikythera import event
 from Antikythera.simulation import simulate
 import sqlite3
@@ -50,14 +50,6 @@ content_month.set(text)
 entry_day = Entry(root, textvariable=content_day).grid(row=2, column=1)
 text = content_day.get()
 content_day.set(text)
-
-entry_hohmann_origin = Entry(root, textvariable=content_hohmann_origin).grid(row=4, column=1)
-text = content_hohmann_origin.get()
-content_hohmann_origin.set(text)
-
-entry_hohmann_destination = Entry(root, textvariable=content_hohmann_destination).grid(row=5, column=1)
-text = content_hohmann_destination.get()
-content_hohmann_destination.set(text)
 
 entry_event_event = Entry(root, textvariable=content_event_event).grid(row=8, column=1)
 text = content_event_event.get()
@@ -123,6 +115,13 @@ def display_planet_info() :
     # p  = display_planet_info.get()
     print("Displaying planet info...")
 
+
+planet_list = ['Sun','Mercury','Venus','Earth','Moon','Mars','Jupiter','Saturn','Uranus','Neptune','Pluto']
+
+
+#spinbox maybe will work for hohmann select
+hohmann_spinbox_origin = Spinbox(root, values=planet_list, textvariable=content_hohmann_origin).grid(row=4, column=1)
+hohmann_spinbox_destination = Spinbox(root, values=planet_list, textvariable=content_hohmann_destination).grid(row=5, column=1)
 
 # buttons
 button_go_to_time = Button(root, text="Go To Time", command=go_to_time).grid(row=3, column=1)
