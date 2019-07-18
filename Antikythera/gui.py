@@ -6,6 +6,7 @@ from Antikythera.simulation import simulate
 import sqlite3
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
+import datetime as d
 
 
 root = Tk()
@@ -37,7 +38,8 @@ content_year = StringVar()
 content_month = StringVar()
 content_day = StringVar()
 content_event_event = StringVar()
-content_event_date = StringVar()
+content_event_date_begin = StringVar()
+content_event_date_end = StringVar()
 #entry boxes
 entry_year = Entry(root, textvariable=content_year).grid(row=0, column=1)
 text = content_year.get()
@@ -55,9 +57,10 @@ entry_event_event = Entry(root, textvariable=content_event_event).grid(row=8, co
 text = content_event_event.get()
 content_event_event.set(text)
 
-entry_event_date = Entry(root, textvariable=content_event_date).grid(row=8, column=0)
+entry_event_date_begin = Entry(root, textvariable=content_event_date_begin).grid(row=8, column=0)
+entry_event_date_end = Entry(root, textvariable=content_event_date_end).grid(row=9)
 
-planet_info_label = Label(root, text=" Click on a planet to display that planet's information").grid(row=10)
+#planet_info_label = Label(root, text=" Click on a planet to display that planet's information").grid(row=10)
 
 #callback functions for buttons
 def go_to_time():
@@ -107,16 +110,21 @@ def search_event_event():
 
 
 def search_event_date():
-    s = content_event_date.get()
-
-    print("Searching by date " + s)
+    s = content_event_date_begin.get()
+    de = content_event_date_end.get()
+    start = d.datetime.strptime(s, "%Y-%m-%d")
+    end = d.datetime.strptime(de, "%Y-%m-%d")
+    crsr.execute("SELECT * FROM event WHERE date BETWEEN ? AND ?", (start, end))
+    results = crsr.fetchall()
+    for i in results:
+        print(i)
 
 def display_planet_info() :
     # p  = display_planet_info.get()
     print("Displaying planet info...")
 
 
-planet_list = ['Sun','Mercury','Venus','Earth','Moon','Mars','Jupiter','Saturn','Uranus','Neptune','Pluto']
+planet_list = ['Sun','Mercury','Venus','Earth','Mars','Jupiter','Saturn','Uranus','Neptune','Pluto']
 
 
 #spinbox maybe will work for hohmann select
@@ -127,7 +135,7 @@ hohmann_spinbox_destination = Spinbox(root, values=planet_list, textvariable=con
 button_go_to_time = Button(root, text="Go To Time", command=go_to_time).grid(row=3, column=1)
 button_hohmann = Button(root, text="Calculate travel window", command=execute_hohmann).grid(row=6, column=1)
 button_search_event_event = Button(root, text="Search by event", command=search_event_event).grid(row=9, column=1)
-button_search_event_date = Button(root, text="Search by date", command=search_event_date).grid(row=9, column=0)
+button_search_event_date = Button(root, text="Search by date", command=search_event_date).grid(row=10, column=0)
 
 
 
