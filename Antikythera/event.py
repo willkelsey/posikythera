@@ -1,5 +1,5 @@
-import datetime
-import planentpos
+import datetime as d
+from Antikythera import planentpos as p
 import sqlite3
 
 
