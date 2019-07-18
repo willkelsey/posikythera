@@ -99,12 +99,16 @@ def togglePP():
     global run
     if run == 0:
         run = 1
-        animate()
+        while run == 1:
+            animate()
     else:
         run = 0
 
 #callback functions for buttons
 def go_to_time():
+    global y
+    global m
+    global d
     gy = content_year.get()
     gm = content_month.get()
     gd = content_day.get()
@@ -126,34 +130,30 @@ def animate():
     global m
     global d
     global run
+    plt.pause(0.1)
+    print("going to: ")
+    print(y, m, d)
+    T = p.calc_date(y, m, d, 12, 0, 0)
 
-    yplus = y + 5
-    while run == 1:
-        while y < yplus:
-            plt.pause(1)
-            print("going to: ")
-            print(y, m, d)
-            T = p.calc_date(y, m, d, 12, 0, 0)
+    xcoords, ycoords, zcoords = simulate(T)
 
-            xcoords, ycoords, zcoords = simulate(T)
-
-            sc._offsets3d = (xcoords, ycoords, zcoords)
-            ##for i, word in enumerate(planets):
-                ## x.text(xcoords[i], ycoords[i], zcoords[i], word)
-    #        if d == 31:
-    #            m += 1
-    #            d = 1
-    #            if m == 12:
-    #                y += 1
-    #                m = 1
-    #        else:
-    #            d += 1
-            if m == 12:
-                y += 1
-                m = 1
-            else:
-                m += 1
-            return d,m,y
+    sc._offsets3d = (xcoords, ycoords, zcoords)
+    ##for i, word in enumerate(planets):
+        ## x.text(xcoords[i], ycoords[i], zcoords[i], word)
+#        if d == 31:
+#            m += 1
+#            d = 1
+#            if m == 12:
+#                y += 1
+#                m = 1
+#        else:
+#            d += 1
+    if m == 12:
+        y += 1
+        m = 1
+    else:
+        m += 1
+    return d,m,y
 
 def execute_hohmann():
     orig = content_hohmann_origin.get()
