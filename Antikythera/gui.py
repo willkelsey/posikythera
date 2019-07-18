@@ -8,7 +8,6 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import datetime as d
 
-
 root = Tk()
 connection = sqlite3.connect('events.db')
 crsr = connection.cursor()
@@ -128,8 +127,8 @@ planet_list = ['Sun','Mercury','Venus','Earth','Mars','Jupiter','Saturn','Uranus
 
 
 #spinbox maybe will work for hohmann select
-hohmann_spinbox_origin = Spinbox(root, values=planet_list, textvariable=content_hohmann_origin).grid(row=4, column=1)
-hohmann_spinbox_destination = Spinbox(root, values=planet_list, textvariable=content_hohmann_destination).grid(row=5, column=1)
+hohmann_spinbox_origin = Spinbox(root, state="readonly", values=planet_list, textvariable=content_hohmann_origin).grid(row=4, column=1)
+hohmann_spinbox_destination = Spinbox(root, state="readonly", values=planet_list, textvariable=content_hohmann_destination).grid(row=5, column=1)
 
 # buttons
 button_go_to_time = Button(root, text="Go To Time", command=go_to_time).grid(row=3, column=1)
