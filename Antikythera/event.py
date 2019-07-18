@@ -1,5 +1,5 @@
 import datetime as d
-import planentpos
+from Antikythera import planentpos as p
 import sqlite3
 
 
@@ -14,7 +14,7 @@ class event(object):
         self.time = tm
 
     def solarSystem(self):
-        T = planentpos.calc_date(self.date.year, self.date.month, self.date.day, self.time.hour, self.time.minute, self.time.second)
+        T = p.calc_date(self.date.year, self.date.month, self.date.day, self.time.hour, self.time.minute, self.time.second)
         return T
 
 
@@ -33,15 +33,13 @@ class eclipse(event):
     def validation(self):
         aligned = False
 
-        Earth = planentpos.planet(-0.00054346, -0.01337178, 1.00000018, -0.00000003, -5.11260389, -0.24212385, 0.01673163,
-                                  -0.00003661, 100.46691572, 35999.37306329, 102.93005885, 0.31795260, 365.2, 0.9857, 'Earth')
-        Earth.x, Earth.y, Earth.z = Earth.calc_pos(Earth.i, Earth.icy, Earth.a, Earth.acy, Earth.an, Earth.ancy,
-                                                   Earth.e, Earth.ecy, Earth.l, Earth.lcy, Earth.w, Earth.wcy,
-                                                   self.solarSystem())
-        Moon = planentpos.satellite(5.16, 0, 0.00256956, 0, 125.08000, -0.00000004, 0.0554, 0, 0, 0, 0, 0)
-        Moon.x, Moon.y, Moon.z = Moon.calc_Moonpos(Moon.i, Moon.icy, Moon.a, Moon.acy, Moon.an, Moon.ancy, Moon.e,
-                                                   Moon.ecy, Moon.l, Moon.lcy, Moon.w, Moon.wcy, self.solarSystem())
-
+        Earth = p.planet(-0.00054346, -0.01337178, 1.00000018, -0.00000003, -5.11260389, -0.24212385, 0.01673163, -0.00003661, 100.46691572, 35999.37306329, 102.93005885, 0.31795260, 365.2, 0.9857, 'Earth')
+        Earth.x, Earth.y, Earth.z = Earth.calc_pos(Earth.i, Earth.icy, Earth.a, Earth.acy, Earth.an, Earth.ancy, Earth.e, Earth.ecy, Earth.l, Earth.lcy, Earth.w, Earth.wcy, self.solarSystem())
+        Moon = p.satellite(5.16, 0, 0.00256956, 0, 125.08000, -0.00000004, 0.0554, 0, 0, 0, 0, 0)
+        Moon.x, Moon.y, Moon.z = Moon.calc_Moonpos(Moon.i, Moon.icy, Moon.a, Moon.acy, Moon.an, Moon.ancy, Moon.e, Moon.ecy, Moon.l, Moon.lcy, Moon.w, Moon.wcy, self.solarSystem())
+        Moon.x = Moon.x + Earth.x
+        Moon.y = Moon.y + Earth.y
+        Moon.z = Moon.z + Earth.z
         if self.type == "solar eclipse":
             # find the line between sun and earth and check if the moon is on that line
             solarSlope = Earth.y/Earth.x
