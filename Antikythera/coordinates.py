@@ -2,12 +2,12 @@ import sqlite3
 from Antikythera import simulation, planentpos
 import datetime
 
-connection = sqlite3.connect('coordinate.db')
-crsr = connection.cursor()
-
 
 def coordinates(year, month, day):
-    planets = ["Mercury", "Venus", "Earth", "Moon", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto"]
+    connection = sqlite3.connect("Antikythera/coordinate.db")
+    crsr = connection.cursor()
+
+    planets = ["Sun", "Mercury", "Venus", "Earth", "Moon", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto"]
     date = datetime.date(year, month, day).isoformat()
     crsr.execute("SELECT * FROM coordinate WHERE date = ?", (date,))
     test = crsr.fetchall()
@@ -21,10 +21,23 @@ def coordinates(year, month, day):
     xcoords, ycoords, zcoords = [], [], []
     for i in range(len(planets)):
         crsr.execute("SELECT x_coordinate FROM coordinate WHERE date = ? and planet = ?", (date, planets[i]))
-        xcoords.append(crsr.fetchone())
+        x_result = crsr.fetchone()
+        for x in x_result:
+            xcoords.append(x)
         crsr.execute("SELECT y_coordinate FROM coordinate WHERE date = ? and planet = ?", (date, planets[i]))
-        ycoords.append(crsr.fetchone())
+        y_result = crsr.fetchone()
+        for y in y_result:
+            ycoords.append(y)
         crsr.execute("SELECT z_coordinate FROM coordinate WHERE date = ? and planet = ?", (date, planets[i]))
-        zcoords.append(crsr.fetchone())
+        z_result = crsr.fetchone()
+        for z in z_result:
+            zcoords.append(z)
+
+    connection.commit()
+    connection.close()
+
+    print(xcoords)
+    print(ycoords)
+    print(zcoords)
 
     return xcoords, ycoords, zcoords

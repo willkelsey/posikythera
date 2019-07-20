@@ -3,14 +3,17 @@ from Antikythera import planentpos as p
 from Antikythera import hohmann
 from Antikythera import event
 from Antikythera.simulation import simulate
+from Antikythera.coordinates import coordinates
 import sqlite3
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
 
 root = Tk()
-connection = sqlite3.connect('events.db')
-crsr = connection.cursor()
+event_db = sqlite3.connect('Antikythera/events.db')
+event_crsr = event_db.cursor()
+coordinate_db = sqlite3.connect('Antikythera/coordinate.db')
+coord_crsr = coordinate_db.cursor()
 menu = Menu(root)
 root.config(menu=menu)
 filemenu = Menu(menu)
@@ -69,9 +72,9 @@ def go_to_time():
     d = int(d, 10)
     print("going to: ")
     print(y, m, d)
-    T = p.calc_date(y, m, d, 12, 0, 0)
-
-    xcoords, ycoords, zcoords = simulate(T)
+    #T = p.calc_date(y, m, d, 12, 0, 0)
+    #xcoords, ycoords, zcoords = simulate(T)
+    xcoords, ycoords, zcoords = coordinates(y, m, d)
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
     ax.scatter(xcoords, ycoords, zcoords, cmap='jet')
@@ -100,8 +103,8 @@ def execute_hohmann():
 
 def search_event_event():
     s = content_event_event.get()
-    crsr.execute("SELECT * FROM event WHERE type=?", (s,))
-    results = crsr.fetchall()
+    event_crsr.execute("SELECT * FROM event WHERE type=?", (s,))
+    results = event_crsr.fetchall()
     for i in results:
         print(i)
 

@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 from Antikythera import event
 from Antikythera import hohmann
 from Antikythera import simulation
+from Antikythera import coordinates
 from mpl_toolkits.mplot3d import Axes3D
 
 
@@ -204,8 +205,7 @@ if __name__ == "__main__":
             month = int(month, 10)
             day = input("Type the day\n")
             day = int(day, 10)
-            T = calc_date(year, month, day, 12, 0, 0)
-            x, y, z = simulation.simulate(T)
+            x, y, z = coordinates.coordinates(year, month, day)
 
 
             fig = plt.figure()
