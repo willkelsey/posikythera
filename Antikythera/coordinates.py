@@ -36,8 +36,4 @@ def coordinates(year, month, day):
     connection.commit()
     connection.close()
 
-    print(xcoords)
-    print(ycoords)
-    print(zcoords)
-
     return xcoords, ycoords, zcoords

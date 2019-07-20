@@ -7,13 +7,12 @@ from Antikythera.coordinates import coordinates
 import sqlite3
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
-
+import datetime as d
+import time
 
 root = Tk()
-event_db = sqlite3.connect('Antikythera/events.db')
-event_crsr = event_db.cursor()
-coordinate_db = sqlite3.connect('Antikythera/coordinate.db')
-coord_crsr = coordinate_db.cursor()
+connection = sqlite3.connect('Antikythera/events.db')
+crsr = connection.cursor()
 menu = Menu(root)
 root.config(menu=menu)
 filemenu = Menu(menu)
@@ -40,7 +39,8 @@ content_year = StringVar()
 content_month = StringVar()
 content_day = StringVar()
 content_event_event = StringVar()
-content_event_date = StringVar()
+content_event_date_begin = StringVar()
+content_event_date_end = StringVar()
 #entry boxes
 entry_year = Entry(root, textvariable=content_year).grid(row=0, column=1)
 text = content_year.get()
@@ -58,22 +58,67 @@ entry_event_event = Entry(root, textvariable=content_event_event).grid(row=8, co
 text = content_event_event.get()
 content_event_event.set(text)
 
-entry_event_date = Entry(root, textvariable=content_event_date).grid(row=8, column=0)
+entry_event_date_begin = Entry(root, textvariable=content_event_date_begin).grid(row=8, column=0)
+entry_event_date_end = Entry(root, textvariable=content_event_date_end).grid(row=9)
 
-planet_info_label = Label(root, text=" Click on a planet to display that planet's information").grid(row=10)
+#planet_info_label = Label(root, text=" Click on a planet to display that planet's information").grid(row=10)
+
+
+#initialize sim
+
+y = 2000
+m = 1
+d = 1
+run = 0
+
+T = p.calc_date(y, m, d, 12, 0, 0)
+
+xcoords, ycoords, zcoords = simulate(T)
+
+plt.ion()
+
+fig = plt.figure()
+ax = fig.add_subplot(111, projection='3d')
+sc = ax.scatter(xcoords, ycoords, zcoords, cmap='jet')
+
+ax.set_xlim3d([-40, 40])
+ax.set_xlabel('X')
+
+ax.set_ylim3d([-40, 40])
+ax.set_ylabel('Y')
+
+ax.set_zlim3d([-40, 40])
+ax.set_zlabel('Z')
+
+ax.set_title('Antikythera')
+planets = ['Sun', 'Mercury', 'Venus', 'Earth', 'Moon', 'Mars', 'Jupiter', 'Saturn', 'Uranus', 'Neptune', 'Pluto']
+#for i, word in enumerate(planets):
+    #ax.text(xcoords[i], ycoords[i], zcoords[i], word)
+fig.show()
+
+def togglePP():
+    global run
+    if run == 0:
+        run = 1
+        while run == 1:
+            animate()
+    else:
+        run = 0
 
 #callback functions for buttons
 def go_to_time():
-    y = content_year.get()
-    m = content_month.get()
-    d = content_day.get()
-    y = int(y, 10)
-    m = int(m, 10)
-    d = int(d, 10)
+    global y
+    global m
+    global d
+    gy = content_year.get()
+    gm = content_month.get()
+    gd = content_day.get()
+    y = int(gy, 10)
+    m = int(gm, 10)
+    d = int(gd, 10)
+
     print("going to: ")
     print(y, m, d)
-    #T = p.calc_date(y, m, d, 12, 0, 0)
-    #xcoords, ycoords, zcoords = simulate(T)
     xcoords, ycoords, zcoords = coordinates(y, m, d)
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
@@ -82,55 +127,78 @@ def go_to_time():
     ax.set_xlim3d([-40, 40])
     ax.set_xlabel('X')
 
-    ax.set_ylim3d([-40, 40])
-    ax.set_ylabel('Y')
+    sc._offsets3d = (xcoords, ycoords, zcoords)
+    return d,m,y
 
-    ax.set_zlim3d([-40, 40])
-    ax.set_zlabel('Z')
-
-    ax.set_title('Antikythera')
-    planets = ['Sun', 'Mercury', 'Venus', 'Earth', 'Moon', 'Mars', 'Jupiter', 'Saturn', 'Uranus', 'Neptune', 'Pluto']
-    for i, word in enumerate(planets):
-        ax.text(xcoords[i], ycoords[i], zcoords[i], word)
-    plt.show()
-
+def animate():
+    global y
+    global m
+    global d
+    global run
+    plt.pause(0.1)
+    print("going to: ")
+    print(y, m, d)
+    xcoords, ycoords, zcoords = coordinates(y, m, d)
+    sc._offsets3d = (xcoords, ycoords, zcoords)
+    ##for i, word in enumerate(planets):
+        ## x.text(xcoords[i], ycoords[i], zcoords[i], word)
+#        if d == 31:
+#            m += 1
+#            d = 1
+#            if m == 12:
+#                y += 1
+#                m = 1
+#        else:
+#            d += 1
+    if m == 12:
+        y += 1
+        m = 1
+    else:
+        m += 1
+    return d,m,y
 
 def execute_hohmann():
-    o = content_hohmann_origin.get()
-    d = content_hohmann_destination.get()
-    hohmann.hohmann(o, d)
+    orig = content_hohmann_origin.get()
+    dest = content_hohmann_destination.get()
+    hohmann.hohmann(orig, dest)
 
 
 def search_event_event():
     s = content_event_event.get()
-    event_crsr.execute("SELECT * FROM event WHERE type=?", (s,))
-    results = event_crsr.fetchall()
+    crsr.execute("SELECT * FROM event WHERE type=?", (s,))
+    results = crsr.fetchall()
     for i in results:
         print(i)
 
 
 def search_event_date():
-    s = content_event_date.get()
-
-    print("Searching by date " + s)
+    s = content_event_date_begin.get()
+    de = content_event_date_end.get()
+    start = d.datetime.strptime(s, "%Y-%m-%d")
+    end = d.datetime.strptime(de, "%Y-%m-%d")
+    crsr.execute("SELECT * FROM event WHERE date BETWEEN ? AND ?", (start, end))
+    results = crsr.fetchall()
+    for i in results:
+        print(i)
 
 def display_planet_info() :
     # p  = display_planet_info.get()
     print("Displaying planet info...")
 
 
-planet_list = ['Sun','Mercury','Venus','Earth','Moon','Mars','Jupiter','Saturn','Uranus','Neptune','Pluto']
+planet_list = ['Sun','Mercury','Venus','Earth','Mars','Jupiter','Saturn','Uranus','Neptune','Pluto']
 
 
 #spinbox maybe will work for hohmann select
-hohmann_spinbox_origin = Spinbox(root, values=planet_list, textvariable=content_hohmann_origin).grid(row=4, column=1)
-hohmann_spinbox_destination = Spinbox(root, values=planet_list, textvariable=content_hohmann_destination).grid(row=5, column=1)
+hohmann_spinbox_origin = Spinbox(root, state="readonly", values=planet_list, textvariable=content_hohmann_origin).grid(row=4, column=1)
+hohmann_spinbox_destination = Spinbox(root, state="readonly", values=planet_list, textvariable=content_hohmann_destination).grid(row=5, column=1)
 
 # buttons
 button_go_to_time = Button(root, text="Go To Time", command=go_to_time).grid(row=3, column=1)
+button_play_pause = Button(root, text="Play/Pause", command=togglePP) .grid(row=3, column=0)
 button_hohmann = Button(root, text="Calculate travel window", command=execute_hohmann).grid(row=6, column=1)
 button_search_event_event = Button(root, text="Search by event", command=search_event_event).grid(row=9, column=1)
-button_search_event_date = Button(root, text="Search by date", command=search_event_date).grid(row=9, column=0)
+button_search_event_date = Button(root, text="Search by date", command=search_event_date).grid(row=10, column=0)
 
 
 
