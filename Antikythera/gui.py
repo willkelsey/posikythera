@@ -58,7 +58,7 @@ entry_day = Entry(root, textvariable=content_day).grid(row=2, column=1)
 text = content_day.get()
 content_day.set(text)
 
-entry_event_event = Entry(root, textvariable=content_event_event).grid(row=8, column=1)
+#entry_event_event = Entry(root, textvariable=content_event_event).grid(row=8, column=1)
 text = content_event_event.get()
 content_event_event.set(text)
 
@@ -408,11 +408,12 @@ def pluto ():
         print(i)
 
 planet_list = ['Sun','Mercury','Venus','Earth','Mars','Jupiter','Saturn','Uranus','Neptune','Pluto']
-
+event_types = ['solar eclipse', 'lunar eclipse']
 
 #spinbox maybe will work for hohmann select
 hohmann_spinbox_origin = Spinbox(root, state="readonly", values=planet_list, textvariable=content_hohmann_origin).grid(row=4, column=1)
 hohmann_spinbox_destination = Spinbox(root, state="readonly", values=planet_list, textvariable=content_hohmann_destination).grid(row=5, column=1)
+search_event_spinbox = Spinbox(root, state="readonly", values=event_types, textvariable=content_event_event).grid(row=8, column=1)
 
 # buttons
 button_go_to_time = Button(root, text="Go To Time", command=go_to_time).grid(row=3, column=1)
