@@ -7,7 +7,7 @@ from Antikythera.coordinates import coordinates
 import sqlite3
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
-import datetime as d
+import datetime as dt
 import time
 
 root = Tk()
@@ -174,8 +174,8 @@ def search_event_event():
 def search_event_date():
     s = content_event_date_begin.get()
     de = content_event_date_end.get()
-    start = d.datetime.strptime(s, "%Y-%m-%d")
-    end = d.datetime.strptime(de, "%Y-%m-%d")
+    start = dt.datetime.strptime(s, "%Y-%m-%d")
+    end = dt.datetime.strptime(de, "%Y-%m-%d")
     crsr.execute("SELECT * FROM event WHERE date BETWEEN ? AND ?", (start, end))
     results = crsr.fetchall()
     for i in results:
