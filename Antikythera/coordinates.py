@@ -22,16 +22,13 @@ def coordinates(year, month, day):
     for i in range(len(planets)):
         crsr.execute("SELECT x_coordinate FROM coordinate WHERE date = ? and planet = ?", (date, planets[i]))
         x_result = crsr.fetchone()
-        for x in x_result:
-            xcoords.append(x)
+        xcoords.append(x_result[0])
         crsr.execute("SELECT y_coordinate FROM coordinate WHERE date = ? and planet = ?", (date, planets[i]))
         y_result = crsr.fetchone()
-        for y in y_result:
-            ycoords.append(y)
+        ycoords.append(y_result[0])
         crsr.execute("SELECT z_coordinate FROM coordinate WHERE date = ? and planet = ?", (date, planets[i]))
         z_result = crsr.fetchone()
-        for z in z_result:
-            zcoords.append(z)
+        zcoords.append(z_result[0])
 
     connection.commit()
     connection.close()
