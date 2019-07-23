@@ -31,7 +31,7 @@ day_label = Label(root, text="Day").grid(row=2)
 hohmann_label_orign = Label(root, text="Origin").grid(row=4)
 hohmann_label_destination = Label(root, text="Destination").grid(row=5)
 search_event_date = Label(root, text="Search for event by date").grid(row=7)
-search_event_event = Label(root, text="Search for event by event type").grid(row=7, column=1)
+# search_event_event = Label(root, text="Search for event by event type").grid(row=7, column=1)
 #setup to get value from entry
 content_hohmann_origin = StringVar()
 content_hohmann_destination = StringVar()
@@ -187,11 +187,12 @@ def display_planet_info() :
 
 
 planet_list = ['Sun','Mercury','Venus','Earth','Mars','Jupiter','Saturn','Uranus','Neptune','Pluto']
-
+event_types = ['solar eclipse', 'lunar eclipse']
 
 #spinbox maybe will work for hohmann select
 hohmann_spinbox_origin = Spinbox(root, state="readonly", values=planet_list, textvariable=content_hohmann_origin).grid(row=4, column=1)
 hohmann_spinbox_destination = Spinbox(root, state="readonly", values=planet_list, textvariable=content_hohmann_destination).grid(row=5, column=1)
+search_event_spinbox = Spinbox(root, state="readonly", values=event_types, textvariable=content_event_event).grid(row=7, column=1)
 
 # buttons
 button_go_to_time = Button(root, text="Go To Time", command=go_to_time).grid(row=3, column=1)
