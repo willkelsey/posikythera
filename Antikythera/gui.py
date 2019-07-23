@@ -413,27 +413,27 @@ event_types = ['solar eclipse', 'lunar eclipse']
 #spinbox maybe will work for hohmann select
 hohmann_spinbox_origin = Spinbox(root, state="readonly", values=planet_list, textvariable=content_hohmann_origin).grid(row=4, column=1)
 hohmann_spinbox_destination = Spinbox(root, state="readonly", values=planet_list, textvariable=content_hohmann_destination).grid(row=5, column=1)
-search_event_spinbox = Spinbox(root, state="readonly", values=event_types, textvariable=content_event_event).grid(row=8, column=1)
 
 # buttons
 button_go_to_time = Button(root, text="Go To Time", command=go_to_time).grid(row=3, column=1)
 button_play_pause = Button(root, text="Play/Pause", command=togglePP) .grid(row=3, column=0)
 button_hohmann = Button(root, text="Calculate travel window", command=execute_hohmann).grid(row=6, column=1)
 button_search_event_event = Button(root, text="Search by event", command=search_event_event).grid(row=9, column=1)
-button_search_event_date = Button(root, text="Search by date", command=search_event_date).grid(row=10, column=0)
+button_search_event_date = Button(root, text="Search by date", command=search_event_date).grid(row=14, column=0)
 
-
+# Information for the user input
+displayContext = Label(root, text = "Format as YYYY/MM/DD").grid(row=10, column=0)
 
 # buttons for displaying planet info
-button_Mercury = Button(root, text="Mercury", command=display_planet_info).grid(row=14, column=0)
-button_Venus = Button(root, text="Venus", command=venus).grid(row=14, column=1)
-button_Earth = Button(root, text="Earth", command=earth).grid(row=15, column=0)
-button_Mars = Button(root, text="Mars", command=mars).grid(row=15, column=1)
-button_Jupiter = Button(root, text="Jupiter", command=jupiter).grid(row=16, column=0)
-button_Saturn = Button(root, text="Saturn", command=saturn).grid(row=16, column=1)
-button_Uranus = Button(root, text="Uranus", command=uranus).grid(row=17, column=0)
-button_Neptune = Button(root, text="Neptune", command=neptune).grid(row=17, column=1)
-button_Pluto = Button(root, text="Pluto", command=pluto).grid(row=18, column=0)
+button_Mercury = Button(root, text="Mercury", command=display_planet_info).grid(row=16, column=0)
+button_Venus = Button(root, text="Venus", command=display_planet_info).grid(row=16, column=1)
+button_Earth = Button(root, text="Earth", command=display_planet_info).grid(row=17, column=0)
+button_Mars = Button(root, text="Mars", command=display_planet_info).grid(row=17, column=1)
+button_Jupiter = Button(root, text="Jupiter", command=display_planet_info).grid(row=18, column=0)
+button_Saturn = Button(root, text="Saturn", command=display_planet_info).grid(row=18, column=1)
+button_Uranus = Button(root, text="Uranus", command=display_planet_info).grid(row=19, column=0)
+button_Neptune = Button(root, text="Neptune", command=display_planet_info).grid(row=19, column=1)
+button_Pluto = Button(root, text="Pluto", command=display_planet_info).grid(row=20, column=0)
 
 # keep the gui open until closed
 mainloop()
