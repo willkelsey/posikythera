@@ -198,10 +198,10 @@ button_hohmann = Button(root, text="Calculate travel window", command=execute_ho
 button_search_event_event = Button(root, text="Search by event", command=search_event_event).grid(row=9, column=1)
 button_search_event_date = Button(root, text="Search by date", command=search_event_date).grid(row=14, column=0)
 
-
+# Information for the user input
+displayContext = Label(root, text = "Format as YYYY/MM/DD").grid(row=10, column=0)
 
 # buttons for displaying planet info
-displayContext = Label(root, text = "Format as YYYY/MM/DD").grid(row=10, column=0)
 button_Mercury = Button(root, text="Mercury", command=display_planet_info).grid(row=16, column=0)
 button_Venus = Button(root, text="Venus", command=display_planet_info).grid(row=16, column=1)
 button_Earth = Button(root, text="Earth", command=display_planet_info).grid(row=17, column=0)
