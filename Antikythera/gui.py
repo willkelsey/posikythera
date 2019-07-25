@@ -12,7 +12,8 @@ import time
 import os
 
 root = Tk()
-filepath = os.path.abspath('Antikythera/events.db')
+filepath = os.path.abspath('events.db')
+print(filepath)
 connection2 = sqlite3.connect('planet.db')
 connection = sqlite3.connect(filepath)
 crsr = connection.cursor()
@@ -423,7 +424,7 @@ button_search_event_event = Button(root, text="Search by event", command=search_
 button_search_event_date = Button(root, text="Search by date", command=search_event_date).grid(row=14, column=0)
 
 # Information for the user input
-displayContext = Label(root, text = "Format as YYYY/MM/DD").grid(row=10, column=0)
+displayContext = Label(root, text = "Format as YYYY-MM-DD").grid(row=10, column=0)
 
 # buttons for displaying planet info
 button_Mercury = Button(root, text="Mercury", command=display_planet_info).grid(row=16, column=0)
