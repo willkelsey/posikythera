@@ -1,10 +1,11 @@
 import sqlite3
-from Antikythera import simulation, planentpos
+import simulation
+import planentpos
 import datetime
 
 
 def coordinates(year, month, day):
-    connection = sqlite3.connect("Antikythera/coordinate.db")
+    connection = sqlite3.connect("coordinate.db")
     crsr = connection.cursor()
 
     planets = ["Sun", "Mercury", "Venus", "Earth", "Moon", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto"]
