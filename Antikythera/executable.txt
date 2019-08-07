@@ -1,0 +1,10 @@
+Executable ReadMe
+
+
+Executable and the databases are located in the google drive folder shared below.
+If databases are already downloaded, those can be used, otherwise they must be downloaded as well.
+In order to run, download the executable and the corresponding databases if necessary.
+To run, put the exe and the three databases together in the same folder, and then double click the executable.
+
+
+https://drive.google.com/open?id=1tM0XcXcHyQ4e45bVf_0lFXNwZZELGf4r
