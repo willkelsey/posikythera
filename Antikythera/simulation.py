@@ -1,4 +1,4 @@
-from Antikythera import planentpos as p
+import planentpos as p
 
 
 def simulate(t):
