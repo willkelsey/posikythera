@@ -1,18 +1,19 @@
 from tkinter import *
-from Antikythera import planentpos as p
-from Antikythera import hohmann
-from Antikythera import event
-from Antikythera.simulation import simulate
-from Antikythera.coordinates import coordinates
+import planentpos as p
+import hohmann
+import event
+from simulation import simulate
+from coordinates import coordinates
 import sqlite3
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import datetime as dt
 import time
 import os
+import itertools
 
 root = Tk()
-filepath = os.path.abspath('Antikythera/events.db')
+filepath = os.path.abspath('events.db')
 connection2 = sqlite3.connect('planet.db')
 connection = sqlite3.connect(filepath)
 crsr = connection.cursor()
@@ -70,9 +71,9 @@ entry_event_date_end = Entry(root, textvariable=content_event_date_end).grid(row
 
 #initialize sim
 
-y = 2000
-m = 1
-d = 1
+y = 2019
+m = 8
+d = 6
 run = 0
 
 T = p.calc_date(y, m, d, 12, 0, 0)
@@ -80,14 +81,14 @@ T = p.calc_date(y, m, d, 12, 0, 0)
 xcoords, ycoords, zcoords = simulate(T)
 
 plt.ion()
-
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
-sc = ax.scatter(xcoords, ycoords, zcoords, cmap='jet')
+planets = ['Sun', 'Mercury', 'Venus', 'Earth', 'Moon', 'Mars', 'Jupiter', 'Saturn', 'Uranus', 'Neptune', 'Pluto']
+sc = ax.scatter(xcoords, ycoords, zcoords, cmap='jet', color=['#F7DC6F', '#444a41', 'g', '#244573', 'w', 'r', '#e07a04', '#6bc2c9', 'b', '#8e6aa6', 'k'], s=[260,3.8,9.5,10,2.5,5.3,111.9,94,40.4,38.3,1.8], depthshade=FALSE)
+
 
 ax.set_xlim3d([-40, 40])
 ax.set_xlabel('X')
-
 ax.set_ylim3d([-40, 40])
 ax.set_ylabel('Y')
 
@@ -95,11 +96,7 @@ ax.set_zlim3d([-40, 40])
 ax.set_zlabel('Z')
 
 ax.set_title('Antikythera')
-planets = ['Sun', 'Mercury', 'Venus', 'Earth', 'Moon', 'Mars', 'Jupiter', 'Saturn', 'Uranus', 'Neptune', 'Pluto']
-#for i, word in enumerate(planets):
-    #ax.text(xcoords[i], ycoords[i], zcoords[i], word)
 fig.show()
-
 def togglePP():
     global run
     if run == 0:
@@ -109,7 +106,6 @@ def togglePP():
     else:
         run = 0
 
-#callback functions for buttons
 def go_to_time():
     global y
     global m
@@ -120,52 +116,116 @@ def go_to_time():
     y = int(gy, 10)
     m = int(gm, 10)
     d = int(gd, 10)
+    if (m > 12) or (m < 1):
+        print("Invalid month")
+    elif (d > 31) or (d < 1):
+        print("Invalid day")
+    elif (m == 2) & (d > 28):
+        print("Invalid entry")
+    elif (m == 4) & (d > 30):
+        print("Invalid entry")
+    elif (m == 6) & (d > 30):
+        print("Invalid entry")
+    elif (m == 9) & (d > 30):
+        print("Invalid entry")
+    elif (m == 11) & (d > 30):
+        print("Invalid entry")
+    else:
+        print("Going to:", m,'/', d ,'/', y)
 
-    print("going to: ")
-    print(y, m, d)
-    xcoords, ycoords, zcoords = coordinates(y, m, d)
-    fig = plt.figure()
-    ax = fig.add_subplot(111, projection='3d')
-    ax.scatter(xcoords, ycoords, zcoords, cmap='jet')
+        sc._offsets3d = (xcoords, ycoords, zcoords)
+        return d, m, y
 
-    ax.set_xlim3d([-40, 40])
-    ax.set_xlabel('X')
-
-    sc._offsets3d = (xcoords, ycoords, zcoords)
-    return d,m,y
 
 def animate():
     global y
     global m
     global d
     global run
-    plt.pause(0.1)
-    print("going to: ")
-    print(y, m, d)
+    plt.pause(0.01)
+    print('Current Date:', m, '/', d, '/', y)
     xcoords, ycoords, zcoords = coordinates(y, m, d)
     sc._offsets3d = (xcoords, ycoords, zcoords)
-    ##for i, word in enumerate(planets):
-        ## x.text(xcoords[i], ycoords[i], zcoords[i], word)
-#        if d == 31:
-#            m += 1
-#            d = 1
-#            if m == 12:
-#                y += 1
-#                m = 1
-#        else:
-#            d += 1
-    if m == 12:
-        y += 1
-        m = 1
-    else:
-        m += 1
-    return d,m,y
+    if m == 1:
+        if d == 31:
+            m = 2
+            d = 1
+        else:
+            d += 1
+    elif m == 2:
+        if d == 28:
+            m = 3
+            d = 1
+        else:
+            d += 1
+    elif m == 3:
+        if d == 31:
+            m = 4
+            d = 1
+        else:
+            d += 1
+    elif m == 4:
+        if d == 30:
+            m = 5
+            d = 1
+        else:
+            d += 1
+    elif m == 5:
+        if d == 31:
+            m = 6
+            d = 1
+        else:
+            d += 1
+    elif m == 6:
+        if d == 30:
+            m = 7
+            d = 1
+        else:
+            d += 1
+    elif m == 7:
+        if d == 31:
+            m = 8
+            d = 1
+        else:
+            d += 1
+    elif m == 8:
+        if d == 31:
+            m = 9
+            d = 1
+        else:
+            d += 1
+    elif m == 9:
+        if d == 30:
+            m = 10
+            d = 1
+        else:
+            d += 1
+    elif m == 10:
+        if d == 31:
+            m = 11
+            d = 1
+        else:
+            d += 1
+    elif m == 11:
+        if d == 30:
+            m = 12
+            d = 1
+        else:
+            d += 1
+    elif m == 12:
+        if d == 31:
+            m = 1
+            d = 1
+            y += 1
+        else:
+            d += 1
+
+    return d, m, y
 
 def execute_hohmann():
     orig = content_hohmann_origin.get()
     dest = content_hohmann_destination.get()
-    hohmann.hohmann(orig, dest)
-
+    hohmann.hohmann(orig, dest,y,m,d)
 
 def search_event_event():
     s = content_event_event.get()
@@ -173,7 +233,6 @@ def search_event_event():
     results = crsr.fetchall()
     for i in results:
         print(i)
-
 
 def search_event_date():
     s = content_event_date_begin.get()
@@ -185,229 +244,69 @@ def search_event_date():
     for i in results:
         print(i)
 
-def display_planet_info():
-    print("Displaying planet info...")
-    print("name, diameter, mass, density, mean oribital velocity, siderial period, rotation period, oribital eccentricity, number of moons")
-    connection2 = sqlite3.connect('planet.db')
-    sql_command = """
-CREATE TABLE planet (
-name    VARCHAR(20),
-diameter    DECIMAL,
-mass    DECIMAL,
-density DECIMAL, 
-meanorbitalvelocity DECIMAL,
-siderialperiod  DECIMAL,
-rotationperiod  DECIMAL,
-orbitaleccentricity DECIMAL,
-distancefromsun DECIMAL,
-numberofmoons   INT);"""
-    sql_command = """INSERT INTO planet VALUES ('Mercury', 4878, 0.33, 5427, 47.4, 87.969, 58.646, 0.206, 57.9, 0);"""
-    connection2.commit()
-    # connection2.close()
-    # global text
-
-    crsr2.execute(sql_command)
+def mercury():
     crsr2.execute("SELECT * FROM planet where name = 'Mercury'")
     results1 = crsr2.fetchall()
-    for i in results1:
-        print(i)
+    for row in results1:
+        print("\nName:", row[0], "\nDiameter:", row[1], "\nMass:", row[2], "\nDensity:", row[3], "\nMean Orbital Velocity:", row[4], "\nSiderial Period:", row[5], "\nRotation Period:", row[6], "\nOrbital Eccentricity:", row[7], "\nDistance from Sun:", row[8], "\nNumber of moons:", row[9])
+        break
 
 def earth() :
-    print("Displaying planet info...")
-    print("name, diameter, mass, density, mean oribital velocity, siderial period, rotation period, oribital eccentricity, number of moons")
-    connection2 = sqlite3.connect('planet.db')
-    sql_command = """
-    CREATE TABLE planet (
-    name    VARCHAR(20),
-    diameter    DECIMAL,
-    mass    DECIMAL,
-    density DECIMAL, 
-    meanorbitalvelocity DECIMAL,
-    siderialperiod  DECIMAL,
-    rotationperiod  DECIMAL,
-    orbitaleccentricity DECIMAL,
-    distancefromsun DECIMAL,
-    numberofmoons   INT);"""
-    sql_command = """INSERT INTO planet VALUES ('Earth', 12756, 5.97, 5500, 29.8, 365.256, 23.9345, 0.0167,149.6, 1);"""
-    crsr2.execute(sql_command)
     crsr2.execute("SELECT * FROM planet where name = 'Earth'")
     results2 = crsr2.fetchall()
-    for i in results2:
-        print(i)
+    for row in results2:
+        print("\nName:", row[0], "\nDiameter:", row[1], "\nMass:", row[2], "\nDensity:", row[3], "\nMean Orbital Velocity:", row[4], "\nSiderial Period:", row[5], "\nRotation Period:", row[6], "\nOrbital Eccentricity:", row[7], "\nDistance from Sun:", row[8], "\nNumber of moons:", row[9])
+        break
 
-def venus ():
-    print("Displaying planet info...")
-    print(
-        "name, diameter, mass, density, mean oribital velocity, siderial period, rotation period, oribital eccentricity, number of moons")
-    connection2 = sqlite3.connect('planet.db')
-    sql_command = """
-       CREATE TABLE planet (
-       name    VARCHAR(20),
-       diameter    DECIMAL,
-       mass    DECIMAL,
-       density DECIMAL, 
-       meanorbitalvelocity DECIMAL,
-       siderialperiod  DECIMAL,
-       rotationperiod  DECIMAL,
-       orbitaleccentricity DECIMAL,
-       distancefromsun DECIMAL,
-       numberofmoons   INT);"""
-    sql_command = """INSERT INTO planet VALUES 
-       ('Venus', 12104, 4.87, 5240, 35, 224.70, 243.01, .007, 108.2, 0);"""
-    crsr2.execute(sql_command)
+def venus():
     crsr2.execute("SELECT * FROM planet where name = 'Venus'")
     results3 = crsr2.fetchall()
-    for i in results3:
-        print(i)
+    for row in results3:
+        print("\nName:", row[0], "\nDiameter:", row[1], "\nMass:", row[2], "\nDensity:", row[3], "\nMean Orbital Velocity:", row[4], "\nSiderial Period:", row[5], "\nRotation Period:", row[6], "\nOrbital Eccentricity:", row[7], "\nDistance from Sun:", row[8], "\nNumber of moons:", row[9])
+        break
 
-def mars ():
-    print("Displaying planet info...")
-    print(
-        "name, diameter, mass, density, mean oribital velocity, siderial period, rotation period, oribital eccentricity, number of moons")
-    connection2 = sqlite3.connect('planet.db')
-    sql_command = """
-       CREATE TABLE planet (
-       name    VARCHAR(20),
-       diameter    DECIMAL,
-       mass    DECIMAL,
-       density DECIMAL, 
-       meanorbitalvelocity DECIMAL,
-       siderialperiod  DECIMAL,
-       rotationperiod  DECIMAL,
-       orbitaleccentricity DECIMAL,
-       distancefromsun DECIMAL,
-       numberofmoons   INT);"""
-    sql_command = """INSERT INTO planet VALUES 
-       ('Mars', 6794, 0.642, 3940, 24.1, 686.98, 24.37, 0.093,227.9, 2);"""
-    crsr2.execute(sql_command)
+def mars():
     crsr2.execute("SELECT * FROM planet where name = 'Mars'")
     results4 = crsr2.fetchall()
-    for i in results4:
-        print(i)
+    for row in results4:
+        print("\nName:", row[0], "\nDiameter:", row[1], "\nMass:", row[2], "\nDensity:", row[3], "\nMean Orbital Velocity:", row[4], "\nSiderial Period:", row[5], "\nRotation Period:", row[6], "\nOrbital Eccentricity:", row[7], "\nDistance from Sun:", row[8], "\nNumber of moons:", row[9])
+        break
 
-def jupiter ():
-    print("Displaying planet info...")
-    print("name, diameter, mass, density, mean oribital velocity, siderial period, rotation period, oribital eccentricity, number of moons")
-    connection2 = sqlite3.connect('planet.db')
-    sql_command = """
-       CREATE TABLE planet (
-       name    VARCHAR(20),
-       diameter    DECIMAL,
-       mass    DECIMAL,
-       density DECIMAL, 
-       meanorbitalvelocity DECIMAL,
-       siderialperiod  DECIMAL,
-       rotationperiod  DECIMAL,
-       orbitaleccentricity DECIMAL,
-       distancefromsun DECIMAL,
-       numberofmoons   INT);"""
-    sql_command = """INSERT INTO planet VALUES 
-       ('Jupiter', 142984, 1898, 1326, 13.1, 11.86, 9.5, 0.048,778.6, 79);"""
-    crsr2.execute(sql_command)
+def jupiter():
     crsr2.execute("SELECT * FROM planet where name = 'Jupiter'")
     results3 = crsr2.fetchall()
-    for i in results3:
-        print(i)
+    for row in results3:
+        print("\nName:", row[0], "\nDiameter:", row[1], "\nMass:", row[2], "\nDensity:", row[3], "\nMean Orbital Velocity:", row[4], "\nSiderial Period:", row[5], "\nRotation Period:", row[6], "\nOrbital Eccentricity:", row[7], "\nDistance from Sun:", row[8], "\nNumber of moons:", row[9])
+        break
 
-def saturn ():
-    print("Displaying planet info...")
-    print("name, diameter, mass, density, mean oribital velocity, siderial period, rotation period, oribital eccentricity, number of moons")
-    connection2 = sqlite3.connect('planet.db')
-    sql_command = """
-       CREATE TABLE planet (
-       name    VARCHAR(20),
-       diameter    DECIMAL,
-       mass    DECIMAL,
-       density DECIMAL, 
-       meanorbitalvelocity DECIMAL,
-       siderialperiod  DECIMAL,
-       rotationperiod  DECIMAL,
-       orbitaleccentricity DECIMAL,
-       distancefromsun DECIMAL,
-       numberofmoons   INT);"""
-    sql_command = """INSERT INTO planet VALUES 
-       ('Saturn', 120536, 568, 687, 9.6, 29.41, 10.13, 0.054, 1433.5, 62);"""
-    crsr2.execute(sql_command)
+def saturn():
     crsr2.execute("SELECT * FROM planet where name = 'Saturn'")
     results3 = crsr2.fetchall()
-    for i in results3:
-        print(i)
-
-
-def uranus ():
-    print("Displaying planet info...")
-    print("name, diameter, mass, density, mean oribital velocity, siderial period, rotation period, oribital eccentricity, number of moons")
-    connection2 = sqlite3.connect('planet.db')
-    sql_command = """
-       CREATE TABLE planet (
-       name    VARCHAR(20),
-       diameter    DECIMAL,
-       mass    DECIMAL,
-       density DECIMAL, 
-       meanorbitalvelocity DECIMAL,
-       siderialperiod  DECIMAL,
-       rotationperiod  DECIMAL,
-       orbitaleccentricity DECIMAL,
-       distancefromsun DECIMAL,
-       numberofmoons   INT);"""
-    sql_command = """INSERT INTO planet VALUES 
-       ('Uranus', 51118, 86.8, 1271, 6.8, 84.04, 17.2, 0.046,2872.5, 27);"""
-    crsr2.execute(sql_command)
+    for row in results3:
+        print("\nName:", row[0], "\nDiameter:", row[1], "\nMass:", row[2], "\nDensity:", row[3], "\nMean Orbital Velocity:", row[4], "\nSiderial Period:", row[5], "\nRotation Period:", row[6], "\nOrbital Eccentricity:", row[7], "\nDistance from Sun:", row[8], "\nNumber of moons:", row[9])
+        break
+def uranus():
     crsr2.execute("SELECT * FROM planet where name = 'Uranus'")
     results3 = crsr2.fetchall()
-    for i in results3:
-        print(i)
+    for row in results3:
+        print("\nName:", row[0], "\nDiameter:", row[1], "\nMass:", row[2], "\nDensity:", row[3], "\nMean Orbital Velocity:", row[4], "\nSiderial Period:", row[5], "\nRotation Period:", row[6], "\nOrbital Eccentricity:", row[7], "\nDistance from Sun:", row[8], "\nNumber of moons:", row[9])
+        break
 
-def neptune ():
-    print("Displaying planet info...")
-    print("name, diameter, mass, density, mean oribital velocity, siderial period, rotation period, oribital eccentricity, number of moons")
-    connection2 = sqlite3.connect('planet.db')
-    sql_command = """
-       CREATE TABLE planet (
-       name    VARCHAR(20),
-       diameter    DECIMAL,
-       mass    DECIMAL,
-       density DECIMAL, 
-       meanorbitalvelocity DECIMAL,
-       siderialperiod  DECIMAL,
-       rotationperiod  DECIMAL,
-       orbitaleccentricity DECIMAL,
-       distancefromsun DECIMAL,
-       numberofmoons   INT);"""
-    sql_command = """INSERT INTO planet VALUES 
-       ('Neptune', 49528, 102, 1638, 5.4, 163.72, 16.11, 0.01, 4495.1, 14);"""
-    crsr2.execute(sql_command)
+def neptune():
     crsr2.execute("SELECT * FROM planet where name = 'Neptune'")
     results3 = crsr2.fetchall()
-    for i in results3:
-        print(i)
+    for row in results3:
+        print("\nName:", row[0], "\nDiameter:", row[1], "\nMass:", row[2], "\nDensity:", row[3], "\nMean Orbital Velocity:", row[4], "\nSiderial Period:", row[5], "\nRotation Period:", row[6], "\nOrbital Eccentricity:", row[7], "\nDistance from Sun:", row[8], "\nNumber of moons:", row[9])
+        break
 
-def pluto ():
-    print("Displaying planet info...")
-    print(
-        "name, diameter, mass, density, mean oribital velocity, siderial period, rotation period, oribital eccentricity, number of moons")
-    connection2 = sqlite3.connect('planet.db')
-    sql_command = """
-       CREATE TABLE planet (
-       name    VARCHAR(20),
-       diameter    DECIMAL,
-       mass    DECIMAL,
-       density DECIMAL, 
-       meanorbitalvelocity DECIMAL,
-       siderialperiod  DECIMAL,
-       rotationperiod  DECIMAL,
-       orbitaleccentricity DECIMAL,
-       distancefromsun DECIMAL,
-       numberofmoons   INT);"""
-    sql_command = """INSERT INTO planet VALUES
-       ('Pluto', 2370, 0.0146, 2095, 4.74, 247.93, 6.3874, 0.248,5906.4, 5);"""
-    crsr2.execute(sql_command)
+def pluto():
     crsr2.execute("SELECT * FROM planet where name = 'Pluto'")
     results3 = crsr2.fetchall()
-    for i in results3:
-        print(i)
+    for row in results3:
+        print("\nName:", row[0], "\nDiameter:", row[1], "\nMass:", row[2], "\nDensity:", row[3], "\nMean Orbital Velocity:", row[4], "\nSiderial Period:", row[5], "\nRotation Period:", row[6], "\nOrbital Eccentricity:", row[7], "\nDistance from Sun:", row[8], "\nNumber of moons:", row[9])
+        break
 
-planet_list = ['Sun','Mercury','Venus','Earth','Mars','Jupiter','Saturn','Uranus','Neptune','Pluto']
+planet_list = ['Mercury','Venus','Earth','Mars','Jupiter','Saturn','Uranus','Neptune','Pluto']
 event_types = ['solar eclipse', 'lunar eclipse']
 
 #spinbox maybe will work for hohmann select
@@ -420,20 +319,21 @@ button_go_to_time = Button(root, text="Go To Time", command=go_to_time).grid(row
 button_play_pause = Button(root, text="Play/Pause", command=togglePP) .grid(row=3, column=0)
 button_hohmann = Button(root, text="Calculate travel window", command=execute_hohmann).grid(row=6, column=1)
 button_search_event_event = Button(root, text="Search by event", command=search_event_event).grid(row=9, column=1)
-button_search_event_date = Button(root, text="Search by date", command=search_event_date).grid(row=10, column=0)
+button_search_event_date = Button(root, text="Search by date", command=search_event_date).grid(row=14, column=0)
 
-
+# Information for the user input
+displayContext = Label(root, text = "Format as YYYY-MM-DD").grid(row=10, column=0)
 
 # buttons for displaying planet info
-button_Mercury = Button(root, text="Mercury", command=display_planet_info).grid(row=14, column=0)
-button_Venus = Button(root, text="Venus", command=venus).grid(row=14, column=1)
-button_Earth = Button(root, text="Earth", command=earth).grid(row=15, column=0)
-button_Mars = Button(root, text="Mars", command=mars).grid(row=15, column=1)
-button_Jupiter = Button(root, text="Jupiter", command=jupiter).grid(row=16, column=0)
-button_Saturn = Button(root, text="Saturn", command=saturn).grid(row=16, column=1)
-button_Uranus = Button(root, text="Uranus", command=uranus).grid(row=17, column=0)
-button_Neptune = Button(root, text="Neptune", command=neptune).grid(row=17, column=1)
-button_Pluto = Button(root, text="Pluto", command=pluto).grid(row=18, column=0)
-
+button_Mercury = Button(root, text="Mercury", command=mercury).grid(row=16, column=0)
+button_Venus = Button(root, text="Venus", command=venus).grid(row=16, column=1)
+button_Earth = Button(root, text="Earth", command=earth).grid(row=17, column=0)
+button_Mars = Button(root, text="Mars", command=mars).grid(row=17, column=1)
+button_Jupiter = Button(root, text="Jupiter", command=jupiter).grid(row=18, column=0)
+button_Saturn = Button(root, text="Saturn", command=saturn).grid(row=18, column=1)
+button_Uranus = Button(root, text="Uranus", command=uranus).grid(row=19, column=0)
+button_Neptune = Button(root, text="Neptune", command=neptune).grid(row=19, column=1)
+button_Pluto = Button(root, text="Pluto", command=pluto).grid(row=20, column=0)
 # keep the gui open until closed
+
 mainloop()
