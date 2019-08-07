@@ -1,42 +1,66 @@
 import datetime as d
-from Antikythera import planentpos as p
+import planentpos as p
 import sqlite3
 
 
+connection = sqlite3.connect('events.db')
+crsr = connection.cursor()
 
-# test if our solar system aligns when there is a known event
-# send date and time of eclipse and check if the position is right
-def validation(T, type):
-    aligned = False
 
-    Earth = p.planet(-0.00054346, -0.01337178, 1.00000018, -0.00000003, -5.11260389, -0.24212385, 0.01673163,
-                                -0.00003661, 100.46691572, 35999.37306329, 102.93005885, 0.31795260, 365.2, 0.9857, 'Earth')
-    Earth.x, Earth.y, Earth.z = Earth.calc_pos(Earth.i, Earth.icy, Earth.a, Earth.acy, Earth.an, Earth.ancy,
-                                                Earth.e, Earth.ecy, Earth.l, Earth.lcy, Earth.w, Earth.wcy,
-                                                T)
-    Moon = p.satellite(5.16, 0, 0.00256956, 0, 125.08000, -0.00000004, 0.0554, 0, 0, 0, 0, 0)
-    Moon.x, Moon.y, Moon.z = Moon.calc_Moonpos(Moon.i, Moon.icy, Moon.a, Moon.acy, Moon.an, Moon.ancy, Moon.e,
-                                                Moon.ecy, Moon.l, Moon.lcy, Moon.w, Moon.wcy, T)
+class event(object):
+    def __init__(self, tp, dt, tm):
+        self.type = tp
+        self.date = dt
+        self.time = tm
 
-    if type == "solar eclipse":
-        # find the line between sun and earth and check if the moon is on that line
-        solarSlope = Earth.y/Earth.x
-        if (Moon.y - (solarSlope * Moon.x))/(solarSlope * Moon.x) < 0.01:
-            aligned = True
+    def solarSystem(self):
+        T = p.calc_date(self.date.year, self.date.month, self.date.day, self.time.hour, self.time.minute, self.time.second)
+        return T
 
-    elif type == "lunar eclipse":
-        # find the line between sun and moon and check if the earth is on that line
-        lunarSlope = Moon.y/Moon.x
-        if (Earth.y - (lunarSlope * Earth.x))/ (lunarSlope * Earth.x) < 0.01:
-            aligned = True
+
+class eclipse(event):
+    def __init__(self, tp, dt, tm, mag, dur, georeg):
+        self.magnitude = mag
+        self.duration = dur
+        self.geoRegion = georeg
+        event.__init__(self, tp, dt, tm)
+
+    def printAll(self):
+        print(self.type, self.date, self.time, self.magnitude, self.duration, self.geoRegion)
+
+    # test if our solar system aligns when there is a known event
+    # send date and time of eclipse and check if the position is right
+    def validation(self):
+        aligned = False
+
+        Earth = p.planet(-0.00054346, -0.01337178, 1.00000018, -0.00000003, -5.11260389, -0.24212385, 0.01673163, -0.00003661, 100.46691572, 35999.37306329, 102.93005885, 0.31795260, 365.2, 0.9857, 'Earth')
+        Earth.x, Earth.y, Earth.z = Earth.calc_pos(Earth.i, Earth.icy, Earth.a, Earth.acy, Earth.an, Earth.ancy, Earth.e, Earth.ecy, Earth.l, Earth.lcy, Earth.w, Earth.wcy, self.solarSystem())
+        Moon = p.satellite(5.16, 0, 0.00256956, 0, 125.08000, -0.00000004, 0.0554, 0, 0, 0, 0, 0)
+        Moon.x, Moon.y, Moon.z = Moon.calc_Moonpos(Moon.i, Moon.icy, Moon.a, Moon.acy, Moon.an, Moon.ancy, Moon.e, Moon.ecy, Moon.l, Moon.lcy, Moon.w, Moon.wcy, self.solarSystem())
+        Moon.x = Moon.x + Earth.x
+        Moon.y = Moon.y + Earth.y
+        Moon.z = Moon.z + Earth.z
+        if self.type == "solar eclipse":
+            # find the line between sun and earth and check if the moon is on that line
+            solarSlope = Earth.y/Earth.x
+            if Moon.y == solarSlope * Moon.x:
+                aligned = True
+
+        elif self.type == "lunar eclipse":
+            # find the line between sun and moon and check if the earth is on that line
+            lunarSlope = Moon.y/Moon.x
+            if Earth.y == lunarSlope * Earth.x:
+                aligned = True
         
-    return aligned
+        return aligned
+
+
+class alignment(event):
+    def __init__(self, tp, dt, tm):
+        event.__init__(self, tp, dt, tm)
 
 
 def search_event():
-    connection = sqlite3.connect('Antikythera/events.db')
-    crsr = connection.cursor()
-
     choice = input("Select 1 to search by date, 2 to search by type, 3 to go back\n")
     while 1:
         if choice == "1":
@@ -54,11 +78,7 @@ def search_event():
             type = input("Enter a type of event you would like to search for: ")
             crsr.execute("SELECT * FROM event WHERE type=?", (type,))
             results = crsr.fetchall()
-            print(len(results))
             for i in results:
                 print(i)
             break
         break
-
-    connection.close()
-
