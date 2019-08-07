@@ -1,10 +1,9 @@
-from Antikythera import planentpos as p
-
+import planentpos as p
 import datetime
 import math
 
 
-def hohmann(orig, dest):
+def hohmann(orig, dest,y,m,d):
     u = 1.32712440018e20
     i = 0
     for i in range(len(p.list)):
@@ -14,9 +13,6 @@ def hohmann(orig, dest):
     for i in range(len(p.list)):
         if dest == p.list[i].name:
             destination = p.list[i]
-    if origin.name == 'Sun' or destination.name == 'Sun':
-        print("What the hell are you doing.")
-        return
     if origin.name == destination.name:
         print("Already there")
         return
@@ -40,7 +36,7 @@ def hohmann(orig, dest):
     print("The total ∆V to get from", origin.name, "to", destination.name, "is", totalV)
     k = 1
     ref = datetime.datetime(2000, 1, 1, 12, 0, 0)
-    date = datetime.datetime(2008, 1, 1, 12, 0, 0)
+    date = datetime.datetime(y, m, d, 12, 0, 0)
     while (k):
         days_elapsed = date - ref
         dec_days_elapsed = days_elapsed.days + (12 / 24 + 0 / 60 / 24 + 0 / 60 / 60 / 24) - (12 / 24 + 0 / 60 / 24 + 0 / 60 / 60 / 24)
@@ -49,15 +45,15 @@ def hohmann(orig, dest):
         dx, dy, dz = destination.calc_pos(destination.i, destination.icy, destination.a, destination.acy, destination.an, destination.ancy, destination.e, destination.ecy, destination.l, destination.lcy, destination.w, destination.wcy, Tme)
         temp = math.atan2(oy - dy, ox - dx)
         temp = temp * (180/math.pi)
-        if math.isclose(position, temp, rel_tol=0.005):
-            print("The window opens on", date)
-            date2 = date + datetime.timedelta(days = p_transferdays)
-            print("Arrival on", destination.name, "will occur on", date2)
+        if math.isclose(position, temp, rel_tol=0.001):
+            print("The window opens on", date.month,'/',date.day,'/',date.year)
+            date2 = date + datetime.timedelta(days=p_transferdays)
+            print("Arrival on", destination.name, "will occur on", date2.month,'/',date2.day,'/',date2.year)
             days_elapsed = date2 - ref
             dec_days_elapsed = days_elapsed.days + (12 / 24 + 0 / 60 / 24 + 0 / 60 / 60 / 24) - (12 / 24 + 0 / 60 / 24 + 0 / 60 / 60 / 24)
             Tme2 = dec_days_elapsed / 36525
             ox2, oy2, oz2 = origin.calc_pos(origin.i, origin.icy, origin.a, origin.acy, origin.an, origin.ancy, origin.e, origin.ecy, origin.l, origin.lcy, origin.w, origin.wcy, Tme2)
-            dx2, dy2, dz2 = destination.calc_pos(destination.i, destination.icy, destination.a, destination.acy, destination.an, destination.ancy, destination.e, destination.ecy,destination.l, destination.lcy, destination.w, destination.wcy, Tme2)
+            dx2, dy2, dz2 = destination.calc_pos(destination.i, destination.icy, destination.a, destination.acy, destination.an, destination.ancy, destination.e, destination.ecy, destination.l, destination.lcy, destination.w, destination.wcy, Tme2)
             break
         else:
             date += datetime.timedelta(days=1)
